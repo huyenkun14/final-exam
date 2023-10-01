@@ -10,27 +10,27 @@ const List = ({ route, navigation }) => {
 
   const addStatus = route.params
   const [text, onChangeText] = useState<any>('')
-  const [listCandidate, setListCandidate] = useState<any>([])
+  const [listCandidate, setListCandidate] = useState([])
   useEffect(() => {
     getListCandidate()
-   console.log(addStatus)
   }, [text, addStatus])
   const getListCandidate = async () => {
     try {
       const res = await getAllCandidate()
-      setListCandidate(res.data)
+      setListCandidate(res.data.items)
+      console.log(res)
     } catch (err: any) {
       const message = err.response
       alert(message)
     }
   }
 
-  const renderListStudents = ({ item }) => {
+  const renderListCandidates = ({ item }) => {
     return (
       <TouchableOpacity onPress={() => { navigation.navigate('Detail', { candidateId: item.id }) }}>
         <View style={styles.itemContainer}>
-          <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.itemCode}>{item.id}</Text>
+          <Text style={styles.itemName}>{item.tenUngVien}</Text>
+          <Text style={styles.itemCode}>{item.maUngVien}</Text>
           <Text style={styles.itemEmail}>{item.email}</Text>
         </View>
       </TouchableOpacity>
@@ -39,7 +39,7 @@ const List = ({ route, navigation }) => {
 
   const handleSearch = () => {
     const resultSearch = listCandidate?.filter(item =>
-      item.name.toLowerCase().includes(text.toLowerCase())
+      item.tenUngVien.toLowerCase().includes(text.toLowerCase())
     )
     console.log(resultSearch)
     setListCandidate(resultSearch)
@@ -62,7 +62,7 @@ const List = ({ route, navigation }) => {
         <FlatList
           data={listCandidate}
           keyExtractor={(item) => item.id}
-          renderItem={renderListStudents}
+          renderItem={renderListCandidates}
           ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: '#000' }} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 200 }}

@@ -7,12 +7,12 @@ export const validateEmail = (email: string) => {
 }
 
 export const validateName = (name: string) => {
-  if (name.length < 20) {
+  if (name.length < 25) {
     return true
   }
 }
 export const validateId = (id: string) => {
-  if (id.length < 5) {
+  if (id.length < 8) {
     return true
   }
 }

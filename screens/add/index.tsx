@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, ToastAndroid } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, ToastAndroid, Modal } from 'react-native'
 import React, { useState } from 'react'
 import Header from '../../component/header'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,25 +10,29 @@ import { validateEmail, validateId, validateName } from '../../utils/validate'
 
 const Add = ({ navigation }) => {
   const [addStatus, setAddStatus] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
   const [infoCandidate, setInfoCandidate] = useState({
-    id: '',
-    name: '',
-    address: '',
-    class: '',
+    maUngVien: '',
+    tenUngVien: '',
+    diaChi: '',
+    moTaKinhNghiem: '',
     email: '',
   });
-  const handleAddSt = async () => {
-    if (!infoCandidate.address) {
+  const handleAddCandidate = async () => {
+    if (!infoCandidate.diaChi) {
       ToastAndroid.show('Địa chỉ không được để trống!', ToastAndroid.SHORT)
+    }
+    else if (!infoCandidate.moTaKinhNghiem) {
+      ToastAndroid.show('Kinh nghiệm không được để trống!', ToastAndroid.SHORT)
     }
     else if (validateEmail(infoCandidate.email)) {
       ToastAndroid.show('Email sai định dạng!', ToastAndroid.SHORT)
     }
-    else if (validateName(infoCandidate.name)) {
-      ToastAndroid.show('Tên dài tối thiểu 20 ký tự!', ToastAndroid.SHORT)
+    else if (validateName(infoCandidate.tenUngVien)) {
+      ToastAndroid.show('Tên dài tối thiểu 25 ký tự!', ToastAndroid.SHORT)
     }
-    else if (validateId(infoCandidate.id)) {
-      ToastAndroid.show('MSSV dài tối thiểu 5 ký tự!', ToastAndroid.SHORT)
+    else if (validateId(infoCandidate.maUngVien)) {
+      ToastAndroid.show('MSSV dài tối thiểu 8 ký tự!', ToastAndroid.SHORT)
     }
     else {
       try {
@@ -37,7 +41,7 @@ const Add = ({ navigation }) => {
           'Đã thêm sinh viên',
           ToastAndroid.LONG
         )
-        setAddStatus(true)
+        setAddStatus(!addStatus)
         navigation.navigate('List', { addStatus })
       } catch (err: any) {
         const message = err.response
@@ -50,16 +54,38 @@ const Add = ({ navigation }) => {
       <StatusBar />
       <Header title='Thêm mới sinh viên' isListScreen={false} />
       <ScrollView>
-        <Form infoSt={infoCandidate} setInfoSt={setInfoCandidate} isEdit={true} />
+        <Form infoCandidate={infoCandidate} setInfoCandidate={setInfoCandidate} isEdit={true} />
         <View style={styles.optionContainer}>
-          <TouchableOpacity onPress={() => { navigation.navigate('List') }}>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Text style={styles.cancel}>Hủy bỏ</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleAddSt}>
+          <TouchableOpacity onPress={handleAddCandidate}>
             <Text style={styles.save}>Lưu lại</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Bạn chắc chắn muốn bỏ thêm mới ứng viên?</Text>
+              <View style={styles.modalBtnContainer}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}>
+                  <Text style={styles.modalBtn}>Ở lại</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List') }}>
+                  <Text style={styles.modalBtn}>Hủy bỏ</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
     </SafeAreaView>
   )
 }

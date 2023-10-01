@@ -9,8 +9,9 @@ import { deleteCandidate, getCandidateById } from '../../services'
 
 const Detail = ({ route, navigation }) => {
   const { candidateId } = route.params
-  const [modalVisible, setModalVisible] = useState(false);
-  const [infoCandidate, setInfoCandidate] = useState(false);
+  const [delStatus, setDelStatus] = useState<boolean>(false)
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [infoCandidate, setInfoCandidate] = useState([]);
   useEffect(() => {
     getCandidate()
   }, [])
@@ -24,15 +25,16 @@ const Detail = ({ route, navigation }) => {
       alert(message)
     }
   }
-  const handleDeleteSt = async () => {
+  const handleDeleteCandidate = async () => {
     try {
       const res = await deleteCandidate(candidateId)
       setModalVisible(false)
+      setDelStatus(!delStatus)
       ToastAndroid.show(
         'Đã xóa sinh viên',
         ToastAndroid.LONG
       )
-      navigation.navigate('List')
+      navigation.navigate('List', {delStatus})
     } catch (err: any) {
       const message = err.response
       alert(message)
@@ -44,7 +46,7 @@ const Detail = ({ route, navigation }) => {
       <StatusBar />
       <Header title='Thông tin chi tiết sinh viên' isListScreen={false} />
       <ScrollView>
-        <Form infoSt={infoCandidate} setInfoSt={setInfoCandidate} isEdit={false} />
+        <Form infoCandidate={infoCandidate} setInfoCandidate={setInfoCandidate} isEdit={false} />
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.delete}>Xóa sinh viên</Text>
         </TouchableOpacity>
@@ -57,14 +59,14 @@ const Detail = ({ route, navigation }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>Bạn chắc chắn muốn xóa sinh viên này?</Text>
+              <Text style={styles.modalText}>Bạn chắc chắn muốn xóa ứng viên này?</Text>
               <View style={styles.modalBtnContainer}>
                 <TouchableOpacity
                   onPress={() => setModalVisible(false)}>
                   <Text style={styles.modalBtn}>Hủy bỏ</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={handleDeleteSt}>
+                  onPress={handleDeleteCandidate}>
                   <Text style={styles.modalBtn}>Xóa</Text>
                 </TouchableOpacity>
               </View>

@@ -1,5 +1,6 @@
-export const BASE_URL = 'https://6495c9ceb08e17c91792add0.mockapi.io/api/mock'
-
+export const BASE_URL = 'http://kiemtra.stecom.vn:8888/api/ung-vien/TTKH1525765'
 export const URL = {
-    CANDIDATE: '/students',
+    GET_ALL: '/get-all',
+    CREATE: '/create',
+    UPDATE: '/update'
 }
